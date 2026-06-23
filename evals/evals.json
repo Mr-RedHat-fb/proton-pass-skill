@@ -1,0 +1,29 @@
+{
+  "skill_name": "proton-pass-cli",
+  "evals": [
+    {
+      "id": 0,
+      "name": "inject-db-password-runtime",
+      "prompt": "I'm running a Node app on a Linux server and I need the database password from Proton Pass available to it at startup as the DB_PASSWORD environment variable — but I do NOT want the secret written to any file on disk. In Proton Pass the vault is 'Production' and the login item is 'Database'. Give me the exact command(s) to do this with the Proton Pass CLI.",
+      "expected_output": "Uses `pass-cli run` with an env var set to pass://Production/Database/password and runs the app after `--`; explicitly avoids `inject`/writing a file; correct pass:// reference (all three parts, case-sensitive).",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 1,
+      "name": "custom-item-home-server",
+      "prompt": "I want to store everything about my home server in one Proton Pass entry: the root SSH password, a Tailscale auth key, and the iDRAC web login (a username plus a password). It doesn't fit a normal login item. How do I create this with the Proton Pass CLI, and can you give me the file and commands?",
+      "expected_output": "Identifies `item create custom`; recommends running `--get-template` first to confirm the schema; groups fields into named sections; marks the secret values as hidden; creates via `--from-template` (ideally stdin to keep secrets off disk/argv).",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "share-vault-readonly",
+      "prompt": "How do I give two coworkers (maria@acme.com and the address devs@acme.com) read-only access to my Proton Pass vault named 'Shared Infra' from the command line?",
+      "expected_output": "Uses `pass-cli vault share --vault-name \"Shared Infra\" <email> --role viewer` for each coworker; explains viewer = read-only (least privilege); notes that sharing grants access to the vault's secrets / suggests confirming; optionally verifies with `vault member list`.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

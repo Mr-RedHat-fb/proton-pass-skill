@@ -1,0 +1,23 @@
+{
+  "_README": "ILLUSTRATIVE SHAPE ONLY. The exact custom-item JSON schema is not fully documented, so it may differ from this. ALWAYS run `pass-cli item create custom --get-template` first and reconcile this structure (and key names) against what the binary emits before using --from-template. This example models a production database with two sections and hidden (secret) fields — adapt sections/fields freely; a custom item can represent anything.",
+  "title": "Prod DB cluster",
+  "note": "Primary + replica credentials for the production database.",
+  "sections": [
+    {
+      "name": "Primary",
+      "fields": [
+        { "name": "host", "type": "text", "value": "db-primary.internal:5432" },
+        { "name": "username", "type": "text", "value": "app" },
+        { "name": "password", "type": "hidden", "value": "REPLACE_ME" }
+      ]
+    },
+    {
+      "name": "Replica",
+      "fields": [
+        { "name": "host", "type": "text", "value": "db-replica.internal:5432" },
+        { "name": "username", "type": "text", "value": "readonly" },
+        { "name": "password", "type": "hidden", "value": "REPLACE_ME" }
+      ]
+    }
+  ]
+}
