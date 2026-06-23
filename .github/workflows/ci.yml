@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Bash syntax check — rock-solid, no deps, no network.
+      - name: Shell syntax (bash -n)
+        run: |
+          shopt -s nullglob globstar
+          files=(scaffolds/**/*.sh)
+          if [ ${#files[@]} -eq 0 ]; then echo "no shell scripts — skipping"; exit 0; fi
+          for f in "${files[@]}"; do echo "::group::$f"; bash -n "$f"; echo "ok"; echo "::endgroup::"; done
+
+      # ShellCheck at error severity only — catches real bugs, never nags on style,
+      # so a green-but-opinionated repo doesn't stall on warnings.
+      - name: ShellCheck (errors only)
+        run: |
+          shopt -s nullglob globstar
+          files=(scaffolds/**/*.sh)
+          if [ ${#files[@]} -eq 0 ]; then echo "no shell scripts — skipping"; exit 0; fi
+          shellcheck --severity=error "${files[@]}"
+
+      # Every JSON file must parse (templates + any config examples).
+      - name: Validate JSON
+        run: |
+          shopt -s nullglob globstar
+          files=(**/*.json)
+          if [ ${#files[@]} -eq 0 ]; then echo "no JSON — skipping"; exit 0; fi
+          for f in "${files[@]}"; do echo "validating $f"; jq empty "$f"; done
+
+      # Syntax-check the MCP server's ESM without installing deps or running it.
+      # NOTE: the MCP smoke test is deliberately NOT run here — it needs a live
+      # pass-cli session + a real agent PAT, which must never live in CI.
+      - name: JS/MJS syntax (node --check)
+        run: |
+          shopt -s nullglob globstar
+          files=(**/*.mjs **/*.js)
+          if [ ${#files[@]} -eq 0 ]; then echo "no JS — skipping"; exit 0; fi
+          for f in "${files[@]}"; do echo "node --check $f"; node --check "$f"; done
