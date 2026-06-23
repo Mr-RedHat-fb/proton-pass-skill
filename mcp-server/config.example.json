@@ -1,0 +1,6 @@
+{
+  "passCliPath": "/path/to/pass-cli",
+  "agentSessionDir": "/tmp/pass-agent-<name>",
+  "patFile": "/path/to/agent-pat-instructions.md",
+  "defaultVault": "Fleet"
+}

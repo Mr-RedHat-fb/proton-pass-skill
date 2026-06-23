@@ -18,6 +18,21 @@ arbitrary custom items).
 - **Custom items**: free-form items with named sections and hidden fields —
   whatever combination of fields you can imagine.
 
+## Two layers — using vs. managing secrets
+
+This repo ships **two complementary tools** for the same vault:
+
+- **`SKILL.md` + `scaffolds/` + `references/`** — the **CLI manual**: how to *manage*
+  the vault (create/rotate/share items, TOTP, SSH keys, custom types, CI wiring).
+- **`mcp-server/`** — a guardrailed **stdio MCP server** wrapping the same `pass-cli`
+  with an audited `reason`, a read-only vault-scoped token, and `inject`/`run` tools
+  that consume secrets **without returning the value to the model**.
+
+**Precedence for agents:** if a task only needs to *use* a secret (render a config,
+run a command, load an SSH key), prefer the **MCP tools** — they keep the value out of
+the transcript and log who read what. Use the **CLI skill** for *managing* the vault.
+See [`mcp-server/README.md`](./mcp-server/README.md) to install it.
+
 ## Install
 
 Clone into your Claude Code skills directory:
@@ -47,6 +62,7 @@ references/
 scaffolds/
   scripts/                   # runnable, copy-and-adapt shell scripts
   templates/                 # JSON item templates for --from-template
+mcp-server/                  # guardrailed stdio MCP server (audited, vault-scoped)
 ```
 
 ## Scaffolds

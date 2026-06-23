@@ -5,6 +5,15 @@
 # Safety: this OVERWRITES the item's password (item update). Confirm with the user
 #         before running. It prints neither the old nor the new password by
 #         default — flip SHOW_NEW=1 only if the user explicitly wants to see it.
+#
+# ⚠ ARGV EXPOSURE (pass-cli limitation, verified via `pass-cli item update --help`):
+#   `item update` only accepts `--field name=value` on the command line — there is no
+#   stdin / --from-template / --generate-password path for *updates*. So the new
+#   password is briefly visible in process arguments (`ps`, /proc/<pid>/cmdline) while
+#   the update runs. There is no pass-cli-level fix — the real mitigation is systemic:
+#   mount /proc with `hidepid=2` so other users can't read another process's argv (closes
+#   argv leaks host-wide). Failing that, on a SHARED host rotate via a Proton Pass GUI
+#   client; on a single-user box the exposure window is brief and local-only.
 set -euo pipefail
 
 VAULT="${VAULT:-Work}"              # <-- edit me
@@ -22,6 +31,7 @@ echo "This overwrites the existing password and cannot be undone via the CLI." >
 
 new_pw="$(pass-cli password generate random --length "$LENGTH" --symbols true --uppercase true)"
 
+# The new value lands in argv here — unavoidable with `item update` (see header caveat).
 pass-cli item update --vault-name "$VAULT" --item-title "$ITEM" \
   --field "password=$new_pw"
 

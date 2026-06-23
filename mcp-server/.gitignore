@@ -1,0 +1,5 @@
+node_modules/
+package-lock.json
+# the REAL config points at your PAT file — keep it local, never commit it
+config.json
+config.local.json

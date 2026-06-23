@@ -1,0 +1,17 @@
+{
+  "name": "proton-pass-secrets-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local stdio MCP server wrapping pass-cli (Proton Pass) for secret read/inject/run/ssh-agent",
+  "bin": {
+    "proton-pass-secrets-mcp": "index.mjs"
+  },
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  }
+}

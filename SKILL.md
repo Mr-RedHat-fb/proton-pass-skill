@@ -23,6 +23,24 @@ This skill teaches you to **run pass-cli correctly** and to **script against
 it**. It bundles ready-to-fill scaffolds in `scaffolds/` for the most common
 jobs and for arbitrary custom items.
 
+## If a guardrailed MCP server is available, prefer it for *using* secrets
+
+This repo also ships a stdio **MCP server** (`mcp-server/`) wrapping the same
+`pass-cli` with an audited `reason`, a read-only vault-scoped token, and tools
+(`inject`, `run`, `ssh_agent_load`) that consume a secret **without ever
+returning its value to the model**. If you're an agent and that server is
+connected (`mcp__proton-pass-secrets__*`):
+
+- **Use the MCP tools when the task only needs to *use* a secret** — render a
+  config (`inject`), run a command/deploy (`run`), load an SSH key
+  (`ssh_agent_load`). The value stays out of the transcript and the access is
+  logged to Proton's encrypted audit log.
+- **Use *this* skill's raw `pass-cli` for *managing* the vault** — rotation,
+  sharing, TOTP, custom item types, PAT/agent-token lifecycle, bulk ops, and
+  anything the server's tool surface doesn't cover.
+
+In one line: **MCP = safely *using* secrets · this skill = *managing* the vault.**
+
 ## When you're working with this skill
 
 1. **Confirm the tool exists first.** Run `pass-cli --version`. If it's missing,
